@@ -1,17 +1,18 @@
 using Demo.Data;
+using Demo.Services;
+using Demo.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AuthDbContext>();
 
 
@@ -54,9 +55,13 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+
+// Register services here for DI
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+
 var app = builder.Build();
 
-app.MapIdentityApi<IdentityUser>();
+//app.MapIdentityApi<ApplicationUser>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
