@@ -25,5 +25,16 @@ namespace Demo.Controllers
 
             return Ok(new { message = "User registered successfully" });
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginRequest request)
+        {
+            var token = await _usersService.LoginAsync(request);
+
+            if (string.IsNullOrEmpty(token))
+                return Unauthorized("Invalid email or password");
+
+            return Ok(new { token });
+        }
     }
 }

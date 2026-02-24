@@ -8,10 +8,14 @@ namespace Demo.Services
     public class UsersRepository : IUsersRepository
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ITokenRepository _tokenRepository;
 
-        public UsersRepository(UserManager<ApplicationUser> userManager)
+        public UsersRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ITokenRepository tokenRepository)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
+            _tokenRepository = tokenRepository;
         }
 
         public async Task<IdentityResult> RegisterAsync(RegisterRequest request)
@@ -32,6 +36,23 @@ namespace Demo.Services
             await _userManager.AddToRoleAsync(user, "Member");
 
             return result;
+        }
+
+        public async Task<string?> LoginAsync(LoginRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+
+            if (user == null)
+                return null;
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+
+            if (!result.Succeeded)
+                return null;
+
+            // TODO: Generate JWT here
+            var token = _tokenRepository.CreateToken(user);
+            return token;
         }
     }
 }
