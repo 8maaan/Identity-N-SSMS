@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Demo.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,5 +14,7 @@ namespace Demo.Data
         protected AuthDbContext()
         {
         }
+
+        public DbSet<UserProfile> UserProfiles { get; set; }
     }
 }

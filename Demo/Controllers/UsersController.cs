@@ -1,4 +1,5 @@
-﻿using Demo.Services.Interfaces;
+﻿using Demo.Models.Requests;
+using Demo.Services.Interfaces;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace Demo.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterRequest request)
+        public async Task<IActionResult> Register(RegisterUserRequest request)
         {
             var result = await _usersService.RegisterAsync(request);
 

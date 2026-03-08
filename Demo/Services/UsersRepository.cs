@@ -1,4 +1,6 @@
 ﻿using Demo.Data;
+using Demo.Entities;
+using Demo.Models.Requests;
 using Demo.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
@@ -10,20 +12,20 @@ namespace Demo.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ITokenRepository _tokenRepository;
+        private readonly AuthDbContext _context;
 
-        public UsersRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ITokenRepository tokenRepository)
+        public UsersRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ITokenRepository tokenRepository, AuthDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenRepository = tokenRepository;
+            _context = context;
         }
 
-        public async Task<IdentityResult> RegisterAsync(RegisterRequest request)
+        public async Task<IdentityResult> RegisterAsync(RegisterUserRequest request)
         {
             var user = new ApplicationUser
             {
-                FirstName = "Test",
-                LastName = "Only",
                 UserName = request.Email,
                 Email = request.Email
             };
@@ -33,7 +35,18 @@ namespace Demo.Services
             if (!result.Succeeded)
                 return result;
 
+            var userProfile = new UserProfile
+            {
+                UserId = user.Id,
+                FirstName = request.FirstName,
+                LastName = request.LastName
+            };
+
+            _context.UserProfiles.Add(userProfile);
+            await _context.SaveChangesAsync();
+
             await _userManager.AddToRoleAsync(user, "Member");
+
 
             return result;
         }
