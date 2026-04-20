@@ -1,4 +1,5 @@
-﻿using Demo.Models.Requests;
+﻿using Demo.Entities;
+using Demo.Models.Requests;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 
@@ -8,5 +9,6 @@ namespace Demo.Services.Interfaces
     {
         Task<IdentityResult> RegisterAsync(RegisterUserRequest request);
         Task<string?> LoginAsync(LoginRequest request);
+        Task<List<UserProfile>> GetAllUsers();
     }
 }

@@ -1,6 +1,4 @@
 ﻿using Demo.Data;
-using Swashbuckle.AspNetCore.Annotations;
-using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace Demo.Entities

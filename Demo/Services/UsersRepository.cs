@@ -4,6 +4,7 @@ using Demo.Models.Requests;
 using Demo.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Demo.Services
 {
@@ -66,6 +67,26 @@ namespace Demo.Services
             // TODO: Generate JWT here
             var token = _tokenRepository.CreateToken(user);
             return token;
+        }
+
+        public async Task<List<UserProfile>> GetAllUsers()
+        {
+            try
+            {
+                var users = await _context.UserProfiles
+                    .Select(u => new UserProfile
+                    {
+                        FirstName = u.FirstName,
+                        LastName = u.LastName
+                    })
+                    .ToListAsync();
+                return users;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new List<UserProfile>();
+            }
         }
     }
 }
